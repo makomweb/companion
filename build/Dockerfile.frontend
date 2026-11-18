@@ -1,0 +1,16 @@
+FROM node:25-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY frontend/package.json frontend/package-lock.json /app/
+
+RUN npm ci
+
+# Copy source code
+COPY frontend /app
+
+EXPOSE 5173
+
+# Default to dev, but can run other commands
+CMD ["npm", "run", "dev"]

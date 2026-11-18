@@ -1,0 +1,21 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+  level: max
+  paths:
+    - bin
+    - config
+    - public
+    - src
+    - tests
+  excludePaths:
+    - bin/console
+  reportUnmatchedIgnoredErrors: true
+  checkTooWideReturnTypesInProtectedAndPublicMethods: true
+  checkPhpDocMissingReturn: true
+  checkUninitializedProperties: true
+  checkMissingTypehints: true
+  checkImplicitMixed: true
+  checkBenevolentUnionTypes: true
+  treatPhpDocTypesAsCertain: false

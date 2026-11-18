@@ -1,0 +1,10 @@
+api_routes:
+    resource: ../src/Controller/Api
+    type: attribute
+    prefix: /api
+
+app_routes:
+    resource: ../src/Controller
+    type: attribute
+    exclude:
+        - ../src/Controller/Api

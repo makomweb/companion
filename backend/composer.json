@@ -1,0 +1,83 @@
+{
+    "type": "project",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.5",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^3.4.2",
+        "doctrine/doctrine-migrations-bundle": "^4.0.1",
+        "doctrine/orm": "^3.8.0",
+        "nelmio/cors-bundle": "^2.6",
+        "phpdocumentor/reflection-docblock": "^6.0.3",
+        "phpstan/phpdoc-parser": "^2.4.1",
+        "predis/predis": "^3.7",
+        "symfony/cache": "8.1.*",
+        "symfony/console": "^8.1.11",
+        "symfony/dotenv": "^8.1.6",
+        "symfony/flex": "^2.12",
+        "symfony/framework-bundle": "^8.1.11",
+        "symfony/http-client": "^8.1.11",
+        "symfony/monolog-bundle": "^4.1.0",
+        "symfony/property-access": "^8.1.11",
+        "symfony/property-info": "^8.1.11",
+        "symfony/rate-limiter": "^8.1.11",
+        "symfony/runtime": "^8.1.11",
+        "symfony/security-bundle": "^8.1.11",
+        "symfony/serializer": "^8.1.11",
+        "symfony/translation": "^8.1.11",
+        "symfony/twig-bundle": "^8.1.9",
+        "symfony/yaml": "^8.1.11"
+    },
+    "require-dev": {
+        "deptrac/deptrac": "^4.7.2",
+        "friendsofphp/php-cs-fixer": "^3.95.32",
+        "phpstan/phpstan": "^2.3.6",
+        "phpunit/phpunit": "^13.4.7",
+        "symfony/browser-kit": "^8.1.11",
+        "symfony/debug-bundle": "^8.1",
+        "symfony/maker-bundle": "^1.68",
+        "symfony/stopwatch": "^8.1",
+        "symfony/var-dumper": "^8.1.10",
+        "symfony/web-profiler-bundle": "^8.1.11"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "8.1.*"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ],
+        "auto-scripts": {
+            "cache:clear --no-warmup": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "cache:clear": "symfony-cmd"
+        }
+    }
+}

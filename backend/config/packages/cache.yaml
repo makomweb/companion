@@ -1,0 +1,15 @@
+framework:
+    cache:
+        pools:
+            cache.adapters.default:
+                adapter: cache.adapter.redis
+                provider: '%env(CACHE_URL)%'
+                default_lifetime: 3600
+
+when@test:
+    framework:
+        cache:
+            pools:
+                cache.adapters.default:
+                    adapter: cache.adapter.array
+                    default_lifetime: 3600

@@ -1,0 +1,116 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      XDEBUG_MODE: "coverage"
+    networks:
+      - companion
+
+  db:
+    image: mysql:8.4
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - companion
+
+  composer:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.composer
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    networks:
+      - companion
+
+  npm:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.npm
+    volumes:
+      - ./frontend:/app
+    networks:
+      - companion
+    
+  cache:
+    image: valkey/valkey:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache_data:/data
+    command: valkey-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - companion
+
+  db-admin:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - "8085:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - companion
+
+  dashboard:
+    image: b4bz/homer:latest
+    volumes:
+      - ./dashboard/config.yml:/www/assets/config.yml
+    ports:
+      - "8001:8080"    
+    user: "1000:1001"
+    restart: unless-stopped
+    networks:
+      - companion
+
+  frontend:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - companion
+    environment:
+      VITE_API_URL: http://localhost:8080
+
+volumes:
+  db_data:
+  cache_data:
+
+networks:
+  companion:
+    driver: bridge

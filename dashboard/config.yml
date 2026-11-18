@@ -1,0 +1,77 @@
+title: "Companion"
+subtitle: "Developer Dashboard"
+
+header: true
+footer: '<p>Homer Dashboard by <a href="https://github.com/homer-dashboard/homer">Bastien Wirtz</a></p>'
+
+# Optional theme customization
+theme: default
+
+services:
+  - name: "Application"
+    icon: "fa-solid fa-rocket"
+    items:
+      - name: "Frontend (Dev)"
+        subtitle: "React 18 + Vite (HMR enabled)"
+        icon: "fa-solid fa-tablet-screen-button"
+        url: "http://localhost:5173"
+        target: "_blank"
+      - name: "Backend API"
+        subtitle: "Symfony 8 REST API"
+        icon: "fa-solid fa-server"
+        url: "http://localhost:8080/"
+        target: "_blank"
+      - name: "Health Check"
+        subtitle: "API Health Status"
+        icon: "fa-solid fa-heartbeat"
+        url: "http://localhost:8080/api/health"
+        target: "_blank"
+
+  - name: "Development Tools"
+    icon: "fa-solid fa-wrench"
+    items:
+      - name: "Symfony Profiler"
+        subtitle: "Debug toolbar & profiler"
+        icon: "fas fa-bug"
+        url: "http://localhost:8080/_profiler"
+        target: "_blank"
+      - name: "Web Profiler"
+        subtitle: "Performance & request analysis"
+        icon: "fas fa-chart-line"
+        url: "http://localhost:8080/_profiler/"
+        target: "_blank"
+      - name: "Symfony Routes"
+        subtitle: "Registered routes"
+        icon: "fa-solid fa-route"
+        url: "http://localhost:8080/_profiler/router"
+        target: "_blank"
+      - name: "Database Admin"
+        subtitle: "Adminer - MySQL management"
+        icon: "fa-solid fa-database"
+        url: "http://localhost:8085/?server=db&username=root&db=companion"
+        target: "_blank"
+      - name: "Redis Cache"
+        subtitle: "Valkey/Redis (CLI only)"
+        icon: "fa-solid fa-plug"
+        url: "redis://localhost:6379"
+        target: "_blank"
+
+  - name: "Resources"
+    icon: "fa-solid fa-link"
+    items:
+      - name: "GitHub Repository"
+        subtitle: "Source code"
+        icon: "fa-brands fa-github"
+        url: "https://github.com/makomweb/companion"
+        target: "_blank"
+      - name: "Symfony Docs"
+        subtitle: "Official documentation"
+        icon: "fa-brands fa-symfony"
+        url: "https://symfony.com/doc/current/index.html"
+        target: "_blank"
+      - name: "React Docs"
+        subtitle: "React official docs"
+        icon: "fa-brands fa-react"
+        url: "https://react.dev"
+        target: "_blank"
+

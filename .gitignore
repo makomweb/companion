@@ -1,0 +1,19 @@
+/vendor/
+/app/vendor/
+node_modules/
+/app/var/
+/app/.env.local
+/app/composer.lock
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment - Local overrides and secrets
+.env
+.env.local
+backend/.env.local
+frontend/.env.local
+

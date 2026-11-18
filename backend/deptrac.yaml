@@ -1,0 +1,49 @@
+deptrac:
+  paths:
+    - ./src
+    - ./tests
+  exclude_files: ~
+    # - '#.*test.*#'
+  layers:
+    - name: Core
+      collectors:
+        - type: classLike
+          value: .*App\\Companion\\.*
+    - name: Generic
+      collectors:
+        - type: classLike
+          value: .*Doctrine\\.*
+        - type: classLike
+          value: .*PHPUnit\\Framework\\.*
+        - type: classLike
+          value: .*Psr\\.*
+        - type: classLike
+          value: .*Symfony\\.*
+    - name: Supporting
+      collectors:
+        - type: classLike
+          value: .*App\\Assert\\.*
+        - type: classLike
+          value: .*App\\Command\\.*
+        - type: classLike
+          value: .*App\\Controller\\.*
+        - type: classLike
+          value: .*App\\Entity\\.*
+        - type: classLike
+          value: .*App\\Repository\\.*
+        - type: classLike
+          value: .*App\\Security\\.*
+    - name: Tests
+      collectors:
+        - type: classLike
+          value: .*App\\Tests\\.*
+  ruleset:
+    Core: ~
+    Generic: ~
+    Supporting:
+      - Core
+      - Generic
+    Tests:
+      - Core
+      - Generic
+      - Supporting

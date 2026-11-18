@@ -1,0 +1,7 @@
+FROM composer:latest
+
+WORKDIR /app
+
+ENTRYPOINT ["composer"]
+
+CMD ["install"]

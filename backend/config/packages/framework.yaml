@@ -1,0 +1,33 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    csrf_protection: true
+    http_method_override: false
+
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
+
+    php_errors:
+        log: true
+
+    serializer:
+        name_converter: 'serializer.name_converter.camel_case_to_snake_case'
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file
+        profiler:
+            collect: false
+
+when@dev:
+    framework:
+        profiler:
+            collect: true
+
+when@prod:
+    framework:
+        # TODO: Set trusted_hosts to your production domain(s)
+        # Example: trusted_hosts: ['example.com', 'www.example.com']

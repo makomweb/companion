@@ -1,0 +1,35 @@
+FROM composer:latest AS builder
+
+WORKDIR /app
+
+# Copy backend structure needed for composer scripts and asset builds
+COPY backend/composer.json backend/composer.lock /app/
+COPY backend/.env.dist /app/.env
+COPY backend/bin /app/bin
+COPY backend/config /app/config
+COPY backend/public /app/public
+COPY backend/src /app/src
+COPY backend/templates /app/templates
+
+# Install dependencies without post-install scripts
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
+FROM dunglas/frankenphp:php8.5
+
+WORKDIR /app
+
+# Production: NO Xdebug, minimal extensions only
+RUN install-php-extensions \
+    dom \
+    intl \
+    mysqli \
+    pdo_mysql
+
+# Copy vendor from builder (compiled dependencies)
+COPY --from=builder /app/vendor /app/vendor
+
+# Copy backend files
+COPY backend /app
+
+ENTRYPOINT ["frankenphp"]
+CMD ["run", "--config", "/app/Caddyfile"]
