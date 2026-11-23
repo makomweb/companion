@@ -1,5 +1,6 @@
 import { useAuth } from '../../auth/useAuth'
 import { HealthStatus } from '../components/HealthStatus'
+import { ChatWidget } from '../components/ChatWidget'
 import { LogOut, Rocket } from 'lucide-react'
 
 export function DashboardPage() {
@@ -38,13 +39,9 @@ export function DashboardPage() {
         </div>
       </header>
 
-      {/* Main Content - Placeholder */}
-      <main className="flex-1 overflow-hidden p-4 md:p-6 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">🚀</div>
-          <h2 className="text-2xl font-semibold text-slate-900 mb-2">Willkommen</h2>
-          <p className="text-slate-600">Minimal UI - Bereit zum Erweitern</p>
-        </div>
+      {/* Chat Widget - Full Height */}
+      <main className="flex-1 overflow-hidden p-4 md:p-6">
+        <ChatWidget />
       </main>
     </div>
   )

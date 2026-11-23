@@ -1,8 +1,9 @@
-# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
-
 parameters:
     app.secret: '%env(APP_SECRET)%'
     app.version: '%env(APP_VERSION)%'
+    ai.provider_endpoint: '%env(string:AI_PROVIDER_ENDPOINT)%'
+    ai.model: '%env(string:AI_MODEL)%'
+    ai.message_store_directory: '%kernel.project_dir%/var/message_store'
 
 services:
     _defaults:
@@ -14,5 +15,20 @@ services:
         exclude:
             - '../src/Kernel.php'
 
-    Psr\Log\LoggerInterface:
-        alias: logger
+    NeuronAI\Chat\History\FileMessageStore:
+        arguments:
+            $directory: '%ai.message_store_directory%'
+            $prefix: 'chat_'
+            $ext: '.json'
+            
+    NeuronAI\Chat\History\MessageStoreInterface:
+        alias: 'NeuronAI\Chat\History\FileMessageStore'
+
+    App\AI\Config:
+        arguments:
+            $providerEndpoint: '%ai.provider_endpoint%'
+            $model: '%ai.model%'
+
+    App\AI\NeuronAdapter:
+        arguments:
+            $tools: !tagged_iterator 'app.neuron_tool'
