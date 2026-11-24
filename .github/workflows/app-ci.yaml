@@ -1,0 +1,88 @@
+name: App CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  PHP:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+      
+    strategy:
+      matrix:
+        php-version: [8.5]
+
+    env:
+      APP_ENV: test
+      APP_VERSION: ${{ github.sha }}
+      APP_TELEMETRY: "Null"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, json, opentelemetry, pdo, pdo_mysql, mysqli, intl, dom, filter, libxml, tokenizer, xmlwriter
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-scripts
+
+      - name: Run static code analysis
+        run: vendor/bin/phpstan analyse src tests --memory-limit=1G
+
+      - name: Run code style checks
+        run: vendor/bin/php-cs-fixer check
+
+      - name: Create test database
+        run: bin/console doctrine:schema:create
+
+      - name: Create mock SPA build for tests
+        run: |
+          mkdir -p public/build
+          echo '<!DOCTYPE html><html><head><title>Test</title></head><body><div id="root"></div></body></html>' > public/build/index.html
+
+      - name: Run automated tests
+        run: vendor/bin/phpunit --coverage-clover=coverage/clover.xml --coverage-filter=src
+
+      - name: Run architecture analysis
+        run: vendor/bin/deptrac analyse --report-uncovered
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage/clover.xml
+          flags: core
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  JavaScript:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    strategy:
+      matrix:
+        node-version: [25]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run frontend tests
+        run: npm test
