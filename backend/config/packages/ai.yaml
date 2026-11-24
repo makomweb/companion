@@ -1,0 +1,15 @@
+ai:
+    # see https://symfony.com/doc/current/ai/components/platform.html
+    platform:
+        ollama:
+            endpoint: '%env(string:AI_PROVIDER_ENDPOINT)%'
+
+    # see https://symfony.com/doc/current/ai/bundles/ai-bundle.html
+    agent:
+        default:
+            platform: 'ai.platform.ollama'
+            model: '%env(string:AI_MODEL)%'
+            tools: true
+
+    # see https://symfony.com/doc/current/ai/components/store.html
+    store:

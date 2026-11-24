@@ -20,7 +20,8 @@ jobs:
     env:
       APP_ENV: test
       APP_VERSION: ${{ github.sha }}
-      APP_TELEMETRY: "Null"
+      AI_PROVIDER_ENDPOINT: "http://example.com:11434"
+      AI_MODEL: "dummy"
 
     steps:
       - uses: actions/checkout@v2
