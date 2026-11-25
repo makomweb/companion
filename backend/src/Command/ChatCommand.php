@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\AI\Chat;
-use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
+use App\AI\ObservableChat;
 use NeuronAI\Chat\Messages\UserMessage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +21,7 @@ use Symfony\Component\Uid\Uuid;
 )]
 class ChatCommand extends Command
 {
-    public function __construct(private readonly Chat $chat)
+    public function __construct(private readonly ObservableChat $chat)
     {
         parent::__construct();
 
@@ -32,12 +31,13 @@ class ChatCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-
         $io->note('Type "exit" or "quit" to end the conversation.');
+
+        $this->chat->subscribe(new ChatEventHandler($io));
 
         do {
             $question = $this->ask($input, $output);
-            $this->answer($question, self::createReportAdapter($io));
+            $this->answer($question);
         } while (!self::isExitCommand($question));
 
         return Command::SUCCESS;
@@ -56,52 +56,16 @@ class ChatCommand extends Command
         return (string) ($userInput ?? '');
     }
 
-    private function answer(string $question, ReportInterface $report): void
+    private function answer(string $question): void
     {
-        if (empty($question)) {
-            return;
+        if (!empty($question)) {
+            $this->chat->submit(new UserMessage($question));
         }
-
-        $report->write('🤖 Agent: ');
-
-        $stream = $this->chat->stream(new UserMessage($question));
-
-        foreach ($stream as $chunk) {
-            if ($chunk instanceof TextChunk) {
-                $report->onChunk($chunk);
-            }
-        }
-
-        $report->finish();
     }
 
     private static function createChatId(): string
     {
         return Uuid::v4()->toRfc4122();
-    }
-
-    private static function createReportAdapter(SymfonyStyle $io): ReportInterface
-    {
-        return new class($io) implements ReportInterface {
-            public function __construct(private SymfonyStyle $io)
-            {
-            }
-
-            public function write(string $message): void
-            {
-                $this->io->write($message);
-            }
-
-            public function onChunk(TextChunk $chunk): void
-            {
-                $this->io->write($chunk->content);
-            }
-
-            public function finish(): void
-            {
-                $this->io->newLine();
-            }
-        };
     }
 
     private static function isExitCommand(string $input): bool

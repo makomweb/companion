@@ -142,6 +142,7 @@ cc: cache-clear
 cache-clear:
 	@echo "Clearing Symfony application cache..."
 	docker compose exec -it backend bin/console cache:clear
+	docker compose exec -it backend bin/console cache:clear --env=test
 
 sa:
 	@echo "Run static code analysis..."

@@ -32,3 +32,6 @@ services:
     App\AI\NeuronAdapter:
         arguments:
             $tools: !tagged_iterator 'app.neuron_tool'
+
+    App\AI\ObservableChat:
+        public: true

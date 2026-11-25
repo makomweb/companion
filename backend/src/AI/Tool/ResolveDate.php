@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\AI;
+namespace App\AI\Tool;
 
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
