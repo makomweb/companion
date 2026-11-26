@@ -1,8 +1,9 @@
-# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
-
 parameters:
     app.secret: '%env(APP_SECRET)%'
     app.version: '%env(APP_VERSION)%'
+    ai.provider_endpoint: '%env(string:AI_PROVIDER_ENDPOINT)%'
+    ai.model: '%env(string:AI_MODEL)%'
+    ai.chat_history_path: '%kernel.project_dir%/var/chat_history'
 
 services:
     _defaults:
@@ -14,5 +15,10 @@ services:
         exclude:
             - '../src/Kernel.php'
 
-    Psr\Log\LoggerInterface:
-        alias: logger
+    App\AI\ChatHistory:
+        arguments:
+            $directory: '%ai.chat_history_path%'
+
+    Symfony\AI\Agent\AgentInterface:
+        alias: 'ai.agent.default'
+

@@ -12,6 +12,10 @@
 
 A production-ready full-stack application scaffold combining **Symfony 8.1** backend + **React 18** frontend + **Docker** containerization, and comprehensive quality assurance which can be used as a project template. 🚀
 
+Includes [**Symfony AI**](https://symfony.com/doc/current/ai/index.html) 🔗 integration for real-time LLM-powered conversations with tool execution and RAG capabilities, enabling intelligent chat features backed by your backend logic.
+
+<img src="./img/screenshot.png" alt="Companion Screenshot" width="600" />
+
 </div>
 
 ## Quick Start

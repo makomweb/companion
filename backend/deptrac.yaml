@@ -22,6 +22,8 @@ deptrac:
     - name: Supporting
       collectors:
         - type: classLike
+          value: .*App\\AI.*
+        - type: classLike
           value: .*App\\Assert\\.*
         - type: classLike
           value: .*App\\Command\\.*
