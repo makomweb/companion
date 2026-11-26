@@ -1,0 +1,3 @@
+services:
+    NeuronAI\Chat\History\MessageStoreInterface:
+        alias: 'NeuronAI\Chat\History\InMemoryMessageStore'
