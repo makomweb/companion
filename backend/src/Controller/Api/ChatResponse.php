@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\AI\Chat;
+use Symfony\AI\Platform\Message\Message;
+use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -43,8 +45,10 @@ final class ChatResponse extends StreamedResponse
     {
         return static function () use ($chat, $message, $threadId): void {
             try {
-                foreach ($chat->stream($message, $threadId) as $chunk) {
-                    self::sendChunk($chunk);
+                foreach ($chat->stream(Message::ofUser($message), $threadId) as $chunk) {
+                    if ($chunk instanceof TextDelta) {
+                        self::sendChunk((string) $chunk);
+                    }
                 }
 
                 self::sendDone();

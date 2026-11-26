@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\AI\Chat;
+use App\AI\ObservableChat;
+use Symfony\AI\Platform\Message\Message;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -20,9 +21,9 @@ use Symfony\Component\Uid\Uuid;
 )]
 class ChatCommand extends Command
 {
-    private const EXIT_COMMANDS = ['exit', 'quit', 'q', 'bye'];
+    private const EXIT_COMMANDS = ['exit', 'quit'];
 
-    public function __construct(private readonly Chat $chat)
+    public function __construct(private readonly ObservableChat $chat)
     {
         parent::__construct();
     }
@@ -30,16 +31,14 @@ class ChatCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $io->note(sprintf('Type "%s" or "%s" to end the conversation.', self::EXIT_COMMANDS[0], self::EXIT_COMMANDS[1]));
 
-        $exitOptions = implode('", "', self::EXIT_COMMANDS);
-        $io->note(sprintf('Type "%s" to end the conversation.', $exitOptions));
+        $this->chat->subscribe(new ChatEventHandler($io));
 
         $threadId = self::createChatId();
-        $reportAdapter = self::createReportAdapter($io);
-
         do {
             $question = $this->ask($input, $output);
-            $this->answer($question, $threadId, $reportAdapter);
+            $this->answer($question, $threadId);
         } while (!self::isExitCommand($question));
 
         return Command::SUCCESS;
@@ -58,51 +57,18 @@ class ChatCommand extends Command
         return (string) ($userInput ?? '');
     }
 
-    private function answer(string $question, string $threadId, ReportInterface $report): void
+    /** @param non-empty-string $threadId */
+    private function answer(string $question, string $threadId): void
     {
-        if (empty($question)) {
-            return;
+        if (!empty($question)) {
+            $this->chat->submit(Message::ofUser($question), $threadId);
         }
-
-        $report->start('🤖 Agent: ');
-
-        /** @var non-empty-string $threadId */
-        $stream = $this->chat->stream($question, $threadId);
-
-        foreach ($stream as $chunk) {
-            $report->write($chunk);
-        }
-
-        $report->finish();
     }
 
+    /** @return non-empty-string */
     private static function createChatId(): string
     {
         return Uuid::v4()->toRfc4122();
-    }
-
-    private static function createReportAdapter(SymfonyStyle $io): ReportInterface
-    {
-        return new class($io) implements ReportInterface {
-            public function __construct(private SymfonyStyle $io)
-            {
-            }
-
-            public function start(string $message): void
-            {
-                $this->io->write($message);
-            }
-
-            public function write(string $chunk): void
-            {
-                $this->io->write($chunk);
-            }
-
-            public function finish(): void
-            {
-                $this->io->newLine();
-            }
-        };
     }
 
     private static function isExitCommand(string $input): bool

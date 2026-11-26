@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\AI;
 
-use App\AI\ResolveDate;
+use App\AI\Tool\ResolveDate;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

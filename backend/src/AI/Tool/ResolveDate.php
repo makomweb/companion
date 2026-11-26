@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\AI;
+namespace App\AI\Tool;
 
 use Symfony\AI\Agent\Toolbox\Attribute\AsTool;
 

@@ -8,7 +8,8 @@ use Symfony\AI\Agent\AgentInterface;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
 use Symfony\AI\Platform\Message\SystemMessage;
-use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
+use Symfony\AI\Platform\Message\UserMessage;
+use Symfony\AI\Platform\Result\Stream\Delta\DeltaInterface;
 
 final class Chat
 {
@@ -21,25 +22,20 @@ final class Chat
     /**
      * Send a message and stream the response.
      *
-     * @param non-empty-string $message
      * @param non-empty-string $threadId
      *
-     * @return \Generator<string>
+     * @return \Generator<DeltaInterface>
      */
-    public function stream(string $message, string $threadId): \Generator
+    public function stream(UserMessage $message, string $threadId): \Generator
     {
-        $userMessage = Message::ofUser($message);
+        $thread = $this->createThread($threadId)->with($message);
 
-        $thread = $this->createThread($threadId)->with($userMessage);
-
-        $this->history->append($threadId, ChatMessage::fromSymfonyAI($userMessage));
+        $this->history->append($threadId, ChatMessage::fromSymfonyAI($message));
 
         $execution = $this->agent->call($thread, ['stream' => true]);
 
         foreach ($execution->asStream() as $chunk) {
-            if ($chunk instanceof TextDelta) {
-                yield (string) $chunk;
-            }
+            yield $chunk;
         }
 
         $this->history->append(
